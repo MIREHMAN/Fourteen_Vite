@@ -21,7 +21,7 @@ export function Router() {
         <Route path={ROUTES.about} element={<About />} />
         <Route path={ROUTES.stores} element={<Stores />} />
         <Route path={ROUTES.products} element={<Products />} />
-        <Route path={ROUTES.pingleProduct} element={<SingleProduct />} />
+        <Route path={ROUTES.singleProduct} element={<SingleProduct />} />
       </Route>
     </Routes>
   );
