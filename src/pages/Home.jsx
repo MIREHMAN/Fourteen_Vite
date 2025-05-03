@@ -1,7 +1,4 @@
-
-
-
-import Categories from "@/components/categories";
+import Categories from "@/components/Categories";
 import { FeaturedCategories } from "@/components/FeaturedCategories/FeaturedCategories";
 import { FlashSale } from "@/components/FlashSales/FlashSale";
 import SpecialOffers from "@/components/SpecialOffers";
