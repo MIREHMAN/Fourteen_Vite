@@ -1,60 +1,69 @@
 import React from "react";
-import { Button } from "@/components/ui/button"; // Keep this if you're using a UI library
+import { Button } from "@/components/ui/button";
+import { useAsync } from "@/hooks/useAsync";
+import { offerService } from "@/services/offerService";
 
-const specialOffers = [
-  {
-    id: "1",
-    title: "Summer Sale",
-    discount: "30% OFF",
-    image:
-      "https://images.unsplash.com/photo-1506784693919-ef06d93c28d2?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-  {
-    id: "2",
-    title: "New User Bonus",
-    discount: "Extra 10% OFF",
-    image:
-      "https://images.unsplash.com/photo-1607083206869-4c7672e72a8a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-  {
-    id: "3",
-    title: "Clearance",
-    discount: "Up to 50% OFF",
-    image:
-      "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-  },
-];
+const PLACEHOLDER_IMAGE = "/offer-placeholder.png";
 
 const SpecialOffers = () => {
+  const {
+    loading,
+    value: offers,
+    error,
+  } = useAsync(() => offerService.getSpecialOffers(), []);
+
   return (
     <section className="bg-accent">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center">
           Special Offers
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {specialOffers.map((offer) => (
-            <div
-              key={offer.id}
-              className="bg-card text-card-foreground rounded-lg shadow-md overflow-hidden"
-            >
-              <div className="h-48 w-full overflow-hidden">
-                <img
-                  src={offer.image}
-                  alt={offer.title}
-                  className="w-full h-full object-cover"
-                />
+
+        {loading && (
+          <p className="text-center text-muted-foreground">Loading offers...</p>
+        )}
+
+        {error && (
+          <p className="text-center text-destructive">
+            Failed to load offers. Please try again later.
+          </p>
+        )}
+
+        {!loading && offers?.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {offers.map(({ id, title, discount_percentage, image }) => (
+              <div
+                key={id}
+                className="bg-card text-card-foreground rounded-lg shadow-md overflow-hidden"
+              >
+                <div className="h-48 w-full overflow-hidden">
+                  <img
+                    src={image?.trim() || PLACEHOLDER_IMAGE}
+                    alt={title || "Special Offer"}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-4">
+                  <h3 className="font-bold text-lg mb-2">
+                    {title || "Untitled Offer"}
+                  </h3>
+                  <p className="text-2xl font-bold text-primary mb-4">
+                    {discount_percentage
+                      ? `${discount_percentage}% OFF`
+                      : "Discount Available"}
+                  </p>
+                  <Button className="w-full">Shop Now</Button>
+                </div>
               </div>
-              <div className="p-4">
-                <h3 className="font-bold text-lg mb-2">{offer.title}</h3>
-                <p className="text-2xl font-bold text-primary mb-4">
-                  {offer.discount}
-                </p>
-                <Button className="w-full">Shop Now</Button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          !loading && (
+            <p className="text-center text-muted-foreground">
+              No special offers at the moment.
+            </p>
+          )
+        )}
       </div>
     </section>
   );

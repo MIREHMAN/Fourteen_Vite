@@ -10,3 +10,4 @@ class TestService {
 
 const service = new TestService();
 export { service as testService };
+

@@ -14,54 +14,35 @@ import {
 } from "@/components/ui/select";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import ProductCard from "@/components/ProductCard";
-
-const dummyProducts = [
-  {
-    id: 1,
-    name: "Product 1",
-    price: 1000,
-    discount_price: 800,
-    discount_percentage: 20,
-    average_rating: 4.5,
-  },
-  {
-    id: 2,
-    name: "Product 2",
-    price: 1500,
-    discount_price: 1200,
-    discount_percentage: 15,
-    average_rating: 4.0,
-  },
-  {
-    id: 3,
-    name: "Product 3",
-    price: 2000,
-    discount_price: 1800,
-    discount_percentage: 10,
-    average_rating: 4.8,
-  },
-  {
-    id: 4,
-    name: "Product 4",
-    price: 2500,
-    discount_price: 2200,
-    discount_percentage: 12,
-    average_rating: 4.2,
-  },
-];
+import { useAsync } from "@/hooks/useAsync";
+import { productsService } from "@/services/productsService";
 
 export default function Products() {
-  const [searchTerm, setSearchTerm] = useState("");
+    const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("");
 
-  const filteredProducts = dummyProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const {
+    loading,
+    value: response,
+    error,
+  } = useAsync(() => productsService.getAllProducts(), []);
+
+  const products = response?.results ?? [];
+
+  const filteredProducts = products
+    .filter((product) =>
+      product.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "price-asc") return a.price - b.price;
+      if (sortBy === "price-desc") return b.price - a.price;
+      if (sortBy === "rating") return b.average_rating - a.average_rating;
+      return 0;
+    });
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-20">
       <div className="flex flex-col lg:flex-row gap-8">
-        {/* Sidebar with Filters */}
         <aside className="lg:w-64 hidden md:block">
           <div className="sticky top-16 max-h-[calc(100vh-4rem)] overflow-auto">
             <Breadcrumbs />
@@ -69,11 +50,9 @@ export default function Products() {
           </div>
         </aside>
 
-        {/* Product Content */}
         <div className="flex-1">
           <h1 className="text-3xl font-bold mb-8">All Products</h1>
 
-          {/* Search and Sort */}
           <div className="flex flex-col md:flex-row justify-between mb-8">
             <div className="flex-1 mb-4 md:mb-0 md:mr-4">
               <Input
@@ -100,14 +79,23 @@ export default function Products() {
             </div>
           </div>
 
-          {/* Product Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
-              <ProductCard key={product.id} {...product} />
-            ))}
-          </div>
+          {loading && (
+            <p className="text-center text-gray-600 text-lg">Loading products...</p>
+          )}
+          {error && (
+            <p className="text-center text-red-500 text-lg">
+              Error fetching products.
+            </p>
+          )}
 
-          {/* Pagination */}
+          {!loading && !error && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredProducts.map((product) => (
+                <ProductCard key={product.id} {...product} />
+              ))}
+            </div>
+          )}
+
           <div className="mt-12 flex justify-center">
             <Button variant="outline" className="mr-2">Previous</Button>
             <Button variant="outline" className="mr-2">1</Button>

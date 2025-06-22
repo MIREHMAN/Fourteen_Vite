@@ -1,45 +1,56 @@
 import { useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-const items = [
-  {
-    id: 1,
-    url: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    alt: "Hero Image 1",
-    title: "Welcome to FourteenMart",
-    description: "Discover amazing products at unbeatable prices",
-    ctaText: "Shop Now",
-  },
-  {
-    id: 2,
-    url: "https://images.unsplash.com/photo-1607082350899-7e105aa886ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-    alt: "Hero Image 2",
-    title: "New Arrivals",
-    description: "Check out our latest collection",
-    ctaText: "Explore",
-  },
-];
+import { productsService } from "@/services/productsService";
+import { useAsync } from "@/hooks/useAsync";
 
 export function Hero() {
+  const { loading, value: items = [], error } = useAsync(() => productsService.getHeroItems(), []);
+
   const [activeIndex, setActiveIndex] = useState(0);
 
+  // Update activeIndex timer only when items change and items are loaded
   useEffect(() => {
+    if (items.length === 0) return;
+
     const intervalId = setInterval(() => {
-      setActiveIndex((prevIndex) => (prevIndex + 1) % items.length);
+      setActiveIndex((prev) => (prev + 1) % items.length);
     }, 5000);
+
     return () => clearInterval(intervalId);
-  }, []);
+  }, [items]);
 
   const handlePrevClick = () => {
-    setActiveIndex(
-      (prevIndex) => (prevIndex - 1 + items.length) % items.length
-    );
+    setActiveIndex((prev) => (prev - 1 + items.length) % items.length);
   };
 
   const handleNextClick = () => {
-    setActiveIndex((prevIndex) => (prevIndex + 1) % items.length);
+    setActiveIndex((prev) => (prev + 1) % items.length);
   };
+
+  if (loading) {
+    return (
+      <div className="h-[400px] flex items-center justify-center text-gray-500">
+        Loading...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="h-[400px] flex items-center justify-center text-red-500">
+        Failed to load hero items.
+      </div>
+    );
+  }
+
+  if (items.length === 0) {
+    return (
+      <div className="h-[400px] flex items-center justify-center text-gray-500">
+        No hero items found.
+      </div>
+    );
+  }
 
   return (
     <div className="relative w-full h-[400px] overflow-hidden">
@@ -51,17 +62,19 @@ export function Hero() {
           }`}
         >
           <img
-            src={item.url}
-            alt={item.alt}
+            src={item.image_url || "https://via.placeholder.com/1350x400"}
+            alt={item.alt_text || ""}
             className="w-full h-full object-cover"
           />
           <div className="absolute inset-0 flex flex-col justify-center items-center bg-black bg-opacity-50 text-white p-8">
             <h2 className="text-2xl md:text-4xl font-bold mb-4 text-center">
               {item.title}
             </h2>
-            <p className="text-md md:text-xl mb-8 text-center">{item.description}</p>
+            <p className="text-md md:text-xl mb-8 text-center">
+              {item.description}
+            </p>
             <Button variant="secondary" size="lg">
-              {item.ctaText}
+              {item.cta_text}
             </Button>
           </div>
         </div>

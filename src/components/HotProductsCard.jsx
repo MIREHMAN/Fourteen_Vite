@@ -1,6 +1,10 @@
 import { Star } from "lucide-react";
 
+const PLACEHOLDER_IMAGE = "/camera.png";
+
 export function HotProductsCard({ rating, image, title, price, onClick }) {
+  const imageUrl = image?.trim() ? image : PLACEHOLDER_IMAGE;
+
   return (
     <button
       onClick={onClick}
@@ -8,8 +12,8 @@ export function HotProductsCard({ rating, image, title, price, onClick }) {
     >
       <div className="w-24 h-24 flex-shrink-0">
         <img
-          src={image}
-          alt={title}
+          src={imageUrl}
+          alt={title || "Product Image"}
           className="w-full h-full object-cover rounded-l-xl"
         />
       </div>
