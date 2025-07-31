@@ -3,13 +3,13 @@ import axios from "axios";
 const axiosUnSecureInstance = axios.create({
   baseURL:
     import.meta.env.VITE_REACT_APP_SERVER_BASE_URL ||
-    "https://jsonplaceholder.typicode.com/api/",
+    "http://212.85.26.28:8000/api/",
 });
 
 const axiosInstance = axios.create({
   baseURL:
     import.meta.env.VITE_REACT_APP_SERVER_BASE_URL ||
-    "https://jsonplaceholder.typicode.com/api/",
+    "http://212.85.26.28:8000/api/",
 });
 
 axiosInstance.interceptors.request.use(
