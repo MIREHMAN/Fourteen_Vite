@@ -1,4 +1,4 @@
-name: Deploy Vite App
+name: 🚀 Deploy Vite App to VPS
 
 on:
   push:
@@ -9,18 +9,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      - name: 📦 Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Deploy to VPS
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.VPS_HOST }}
-        username: ${{ secrets.VPS_USER }}
-        key: ${{ secrets.VPS_SSH_KEY }}
-        port: 22
-        script: |
-          cd /home/ubuntu/fe_apps/Fourteen_Vite
-          git pull origin main
-          npm install
-          npm run build
+      - name: 🚀 Deploy to VPS via SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: 22
+          script: |
+            echo "🔁 Switching to app directory..."
+            cd /home/ubuntu/fe_apps/Fourteen_Vite
+
+            echo "📥 Pulling latest changes from GitHub..."
+            git reset --hard
+            git pull origin main
+
+            echo "📦 Installing dependencies..."
+            npm install
+
+            echo "🛠 Building the Vite app..."
+            npm run build
+
+            echo "✅ Deployment complete."
