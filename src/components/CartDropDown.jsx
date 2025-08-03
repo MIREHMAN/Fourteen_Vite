@@ -1,18 +1,15 @@
-
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useCart } from "@/contexts/CartContext";
+import { useCart } from "@/context/useCart";
 import { ShoppingCart } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link";
+import { Link } from "react-router-dom";
 
-export function CartDropdown({ count }: { count: number }) {
-  const { cart, updateQuantity } = useCart();
+export function CartDropdown({ count }) {
+  const { cart, updateQuantity, clearCart } = useCart();
 
   const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -31,20 +28,19 @@ export function CartDropdown({ count }: { count: number }) {
           )}
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end" className="w-80">
-        <div className="max-h-96 overflow-auto">
+        <div className="max-h-96 overflow-auto px-2 py-2">
           {cart.map((item) => (
-            <DropdownMenuItem
+            <div
               key={item.id}
-              className="flex items-center gap-4 py-4"
+              className="flex items-center gap-4 py-2 border-b last:border-none"
             >
-              <div className="relative w-16 h-16">
-                <Image
+              <div className="w-10 h-10 overflow-hidden rounded relative">
+                <img
                   src={item.image}
                   alt={item.name}
-                  layout="fill"
-                  objectFit="cover"
-                  className="rounded"
+                  className="w-full h-full object-contain"
                 />
               </div>
               <div className="flex-1">
@@ -58,7 +54,10 @@ export function CartDropdown({ count }: { count: number }) {
                   variant="outline"
                   size="icon"
                   className="h-6 w-6"
-                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateQuantity(item.id, item.quantity - 1);
+                  }}
                 >
                   -
                 </Button>
@@ -67,30 +66,39 @@ export function CartDropdown({ count }: { count: number }) {
                   variant="outline"
                   size="icon"
                   className="h-6 w-6"
-                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    updateQuantity(item.id, item.quantity + 1);
+                  }}
                 >
                   +
                 </Button>
               </div>
-            </DropdownMenuItem>
+            </div>
           ))}
         </div>
+
         {cart.length > 0 ? (
-          <>
-            <div className="border-t p-4">
-              <p className="font-semibold mb-4">
-                Subtotal: RS. {subtotal.toLocaleString()}
-              </p>
-              <div className="flex gap-2">
-                <Button asChild className="flex-1">
-                  <Link href="/cart">View Cart</Link>
-                </Button>
-                <Button asChild className="flex-1">
-                  <Link href="/checkout">Checkout</Link>
-                </Button>
-              </div>
+          <div className="border-t p-4 space-y-3">
+            <p className="font-semibold">
+              Subtotal: RS. {subtotal.toLocaleString()}
+            </p>
+            <div className="flex gap-2">
+              <Link to="/cart" className="flex-1">
+                <Button className="w-full">View Cart</Button>
+              </Link>
+              <Link to="/checkout" className="flex-1">
+                <Button className="w-full">Checkout</Button>
+              </Link>
             </div>
-          </>
+            <Button
+              variant="destructive"
+              className="w-full"
+              onClick={() => clearCart()}
+            >
+              Clear Cart
+            </Button>
+          </div>
         ) : (
           <div className="p-4 text-center">Your cart is empty</div>
         )}

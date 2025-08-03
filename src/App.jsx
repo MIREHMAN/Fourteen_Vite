@@ -1,8 +1,13 @@
 import "./App.css";
 import { Router } from "./pages/router";
+import { CartProvider } from "@/context/cartContext"; 
 
 function App() {
-  return <Router />;
+  return (
+    <CartProvider>
+      <Router />
+    </CartProvider>
+  );
 }
 
 export default App;

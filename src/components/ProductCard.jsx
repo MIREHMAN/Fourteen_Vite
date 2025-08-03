@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Star, Heart, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/context/useCart";
 
 const ProductCard = ({
   id,
@@ -10,11 +11,32 @@ const ProductCard = ({
   average_rating,
   discount_percentage,
 }) => {
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
+
+  const product = {
+    id,
+    name,
+    price,
+    discount_price,
+    average_rating,
+    discount_percentage,
+    image: "/camera.png",
+  };
+
+  const handleBuyNow = () => {
+    navigate("/checkout", { state: { product } });
+  };
+
+  const handleAddToCart = () => {
+    addToCart(product);
+  };
+
   return (
     <div className="bg-card text-card-foreground shadow-lg rounded-xl overflow-hidden transition-all duration-300 hover:shadow-xl transform flex flex-col h-full">
-      <Link to={`/products/${id}`} className="relative cursor-pointer">
+      <div className="relative cursor-pointer" onClick={() => navigate(`/products/${id}`)}>
         <img
-          src={"/camera.png"}
+          src={product.image}
           alt={name}
           className="w-full h-32 sm:h-40 object-contain"
         />
@@ -30,7 +52,7 @@ const ProductCard = ({
         >
           <Heart className="h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground hover:text-red-500" />
         </Button>
-      </Link>
+      </div>
 
       <div className="p-2 sm:p-4 flex-grow">
         <div className="flex justify-between items-center mb-1 sm:mb-2">
@@ -61,8 +83,18 @@ const ProductCard = ({
 
       <div className="px-2 sm:px-4 pb-2 sm:pb-4 mt-auto">
         <div className="flex justify-between gap-2">
-          <Button className="flex-grow text-xs sm:text-sm py-2">Buy Now</Button>
-          <Button variant="outline" size="icon" className="p-2 sm:p-3">
+          <Button
+            onClick={handleBuyNow}
+            className="flex-grow text-xs sm:text-sm py-2"
+          >
+            Buy Now
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            className="p-2 sm:p-3"
+            onClick={handleAddToCart}
+          >
             <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5" />
           </Button>
         </div>
