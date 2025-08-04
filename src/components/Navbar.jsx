@@ -6,7 +6,7 @@ import { Search } from "lucide-react";
 
 import { CartDropdown } from "./CartDropDown";
 import { useCart } from "@/context/useCart";
-import { MobileMenu } from "./MobileMenu";
+import { MobileMenu } from "@/components/mobileMenu";
 
 const pages = ["Home", "Products", "Stores", "About"];
 

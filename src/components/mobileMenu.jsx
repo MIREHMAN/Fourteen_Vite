@@ -85,3 +85,4 @@ export function MobileMenu() {
     </div>
   );
 }
+export default MobileMenu;
