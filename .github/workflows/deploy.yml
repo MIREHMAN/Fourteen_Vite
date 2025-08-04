@@ -34,11 +34,6 @@ jobs:
           cd /home/fourteenmart/htdocs/fourteenmart.com/Fourteen_Vite
           npm run build
 
-      - name: 📁 Deploy Build to NGINX Directory
-        run: |
-          sudo rm -rf /var/www/fourteenmart/html/*
-          sudo cp -r /home/fourteenmart/htdocs/fourteenmart.com/Fourteen_Vite/dist/* /var/www/fourteenmart/html/
-
       - name: 🔄 Restart NGINX
         run: sudo systemctl restart nginx
 
