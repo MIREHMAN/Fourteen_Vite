@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -6,10 +7,12 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useCart } from "@/context/useCart";
 import { ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export function CartDropdown({ count }) {
+  const [open, setOpen] = useState(false);
   const { cart, updateQuantity, clearCart } = useCart();
+  const navigate = useNavigate();
 
   const subtotal = cart.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -17,7 +20,7 @@ export function CartDropdown({ count }) {
   );
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon" className="relative">
           <ShoppingCart className="h-5 w-5" />
@@ -54,10 +57,7 @@ export function CartDropdown({ count }) {
                   variant="outline"
                   size="icon"
                   className="h-6 w-6"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateQuantity(item.id, item.quantity - 1);
-                  }}
+                  onClick={() => updateQuantity(item.id, item.quantity - 1)}
                 >
                   -
                 </Button>
@@ -66,10 +66,7 @@ export function CartDropdown({ count }) {
                   variant="outline"
                   size="icon"
                   className="h-6 w-6"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    updateQuantity(item.id, item.quantity + 1);
-                  }}
+                  onClick={() => updateQuantity(item.id, item.quantity + 1)}
                 >
                   +
                 </Button>
@@ -84,12 +81,24 @@ export function CartDropdown({ count }) {
               Subtotal: RS. {subtotal.toLocaleString()}
             </p>
             <div className="flex gap-2">
-              <Link to="/cart" className="flex-1">
-                <Button className="w-full">View Cart</Button>
-              </Link>
-              <Link to="/checkout" className="flex-1">
-                <Button className="w-full">Checkout</Button>
-              </Link>
+              <Button
+                className="flex-1"
+                onClick={() => {
+                  setOpen(false);
+                  navigate("/cart");
+                }}
+              >
+                View Cart
+              </Button>
+              <Button
+                className="flex-1"
+                onClick={() => {
+                  setOpen(false);
+                  navigate("/checkout");
+                }}
+              >
+                Checkout
+              </Button>
             </div>
             <Button
               variant="destructive"
