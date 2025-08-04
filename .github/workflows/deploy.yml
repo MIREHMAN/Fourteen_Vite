@@ -1,4 +1,4 @@
-name: 🚀 Deploy Vite App to VPS
+name: 🚀 Deploy Vite App (Self-Hosted)
 
 on:
   push:
@@ -6,31 +6,36 @@ on:
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    name: Build and Deploy Vite App
+    runs-on: self-hosted
 
     steps:
       - name: 📦 Checkout Code
         uses: actions/checkout@v3
 
-      - name: 🚀 Deploy to VPS via SSH
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.VPS_HOST }}
-          username: ${{ secrets.VPS_USER }}
-          key: ${{ secrets.REPO_SSH_KEY}}
-          port: 22
-          script: |
-            echo "🔁 Switching to app directory..."
-            cd /home/ubuntu/fe_apps/Fourteen_Vite
+      - name: 🔁 Navigate to Project Directory & Pull Latest Code
+        run: |
+          cd /home/fourteenmart/htdocs/fourteenmart.com/Fourteen_Vite
+          git reset --hard
+          git pull origin main
 
-            echo "📥 Pulling latest changes from GitHub..."
-            git reset --hard
-            git pull origin main
+      - name: 📦 Install Node Dependencies
+        run: |
+          cd /home/fourteenmart/htdocs/fourteenmart.com/Fourteen_Vite
+          npm ci
 
-            echo "📦 Installing dependencies..."
-            npm install
+      - name: 🛠 Build Vite App
+        run: |
+          cd /home/fourteenmart/htdocs/fourteenmart.com/Fourteen_Vite
+          npm run build
 
-            echo "🛠 Building the Vite app..."
-            npm run build
+      - name: 📁 Deploy Build to NGINX Directory
+        run: |
+          sudo rm -rf /var/www/fourteenmart/html/*
+          sudo cp -r /home/fourteenmart/htdocs/fourteenmart.com/Fourteen_Vite/dist/* /var/www/fourteenmart/html/
 
-            echo "✅ Deployment complete."
+      - name: 🔄 Restart NGINX
+        run: sudo systemctl restart nginx
+
+      - name: ✅ Deployment Complete
+        run: echo "🚀 Vite app deployed successfully!"
