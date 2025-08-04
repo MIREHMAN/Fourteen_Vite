@@ -12,7 +12,12 @@ jobs:
     steps:
       - name: 📦 Checkout Code
         uses: actions/checkout@v3
-
+      
+      - name: 🛠 Setup SSH Known Hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+      
       - name: 🔁 Navigate to Project Directory & Pull Latest Code
         run: |
           cd /home/fourteenmart/htdocs/fourteenmart.com/Fourteen_Vite
