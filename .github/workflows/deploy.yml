@@ -34,8 +34,8 @@ jobs:
           cd /home/fourteenmart/htdocs/fourteenmart.com/Fourteen_Vite
           npm run build
 
-      - name: 🔄 Restart NGINX
-        run: sudo systemctl restart nginx
+      - name: Restart Nginx
+        run: sudo /bin/systemctl restart nginx
 
       - name: ✅ Deployment Complete
         run: echo "🚀 Vite app deployed successfully!"
