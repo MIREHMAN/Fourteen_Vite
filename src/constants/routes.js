@@ -8,4 +8,5 @@ export const ROUTES = Object.freeze({
   products: "/products",
   checkout: "/checkout",
   cart: "/cart",
+  orderConfirmation: "/order-confirmation",
 });

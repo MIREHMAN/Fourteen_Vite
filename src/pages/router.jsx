@@ -14,6 +14,7 @@ import SingleProduct from "./SingleProduct";
 import Products from "./Products";
 import CheckoutPage from "./Checkout";
 import CartPage from "./Cart";
+import OrderConfirmationPage from "./OrderConfirmation";
 
 export function Router() {
   return (
@@ -26,6 +27,7 @@ export function Router() {
         <Route path={ROUTES.singleProduct} element={<SingleProduct />} />
         <Route path={ROUTES.checkout} element={<CheckoutPage />} />
         <Route path={ROUTES.cart} element={<CartPage />} />
+        <Route path={ROUTES.orderConfirmation} element={<OrderConfirmationPage />} />
       </Route>
     </Routes>
   );

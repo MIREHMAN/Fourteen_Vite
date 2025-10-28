@@ -1,26 +1,9 @@
-"use client";
-
 import { useState } from "react";
 
-interface Option {
-  name: string;
-  choices: string[];
-}
+const CustomizeProducts = ({ options, onOptionSelect }) => {
+  const [selectedOptions, setSelectedOptions] = useState({});
 
-interface CustomizeProductsProps {
-  options: Option[];
-  onOptionSelect: (name: string, value: string) => void;
-}
-
-const CustomizeProducts: React.FC<CustomizeProductsProps> = ({
-  options,
-  onOptionSelect,
-}) => {
-  const [selectedOptions, setSelectedOptions] = useState<
-    Record<string, string>
-  >({});
-
-  const handleOptionSelect = (name: string, choice: string) => {
+  const handleOptionSelect = (name, choice) => {
     setSelectedOptions((prev) => ({ ...prev, [name]: choice }));
     onOptionSelect(name, choice);
   };

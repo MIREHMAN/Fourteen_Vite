@@ -12,7 +12,7 @@ const ProductCard = ({
   discount_percentage,
 }) => {
   const navigate = useNavigate();
-  const { addToCart } = useCart();
+  const { addToCart, buyNow } = useCart();
 
   const product = {
     id,
@@ -24,10 +24,13 @@ const ProductCard = ({
     image: "/camera.png",
   };
 
+  // Buy Now: replace cart with this item and go to checkout
   const handleBuyNow = () => {
-    navigate("/checkout", { state: { product } });
+    buyNow(product);
+    navigate("/checkout");
   };
 
+  // Add to cart: adds or increments quantity
   const handleAddToCart = () => {
     addToCart(product);
   };

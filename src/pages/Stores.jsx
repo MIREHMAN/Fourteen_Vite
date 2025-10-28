@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { StoreCard } from "@/components/StoreCard";
 import { FiltersSideMenu } from "@/components/FiltersSideMenu";
 import { Input } from "@/components/ui/input";
@@ -67,35 +67,45 @@ function StoresPage() {
   const [sortBy, setSortBy] = useState("");
 
   return (
-    <div className="max-w-7xl mx-auto px-2 sm:px-4 md:px-6 lg:px-8 py-6 md:py-12">
-      <h1 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 md:mb-8 text-center lg:text-left">
-        Our Stores
-      </h1>
+    <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-8 md:py-12 bg-slate-50 min-h-screen">
+      {/* Header */}
+      <div className="mb-8 text-center lg:text-left">
+        <h1 className="text-2xl md:text-3xl font-bold text-slate-800">
+          Discover Our Stores
+        </h1>
+        <p className="text-slate-500 text-sm md:text-base mt-1">
+          Explore trusted brands and top-rated shops from every category
+        </p>
+      </div>
 
-      <div className="flex flex-col lg:flex-row gap-4 md:gap-8">
-        {/* Sidebar for Filters */}
+      {/* Layout */}
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Sidebar (Desktop) */}
         <aside className="lg:w-64 hidden lg:block">
-          <FiltersSideMenu />
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4">
+            <FiltersSideMenu />
+          </div>
         </aside>
 
-        {/* Mobile Filter Sheet */}
+        {/* Mobile Filter Button */}
         <div className="lg:hidden mb-2 md:mb-4">
           <FilterSheet />
         </div>
 
-        {/* Main Content */}
+        {/* Main Section */}
         <div className="flex-1">
-          {/* Search and Sort */}
-          <div className="flex flex-col md:flex-row justify-between mb-4 md:mb-8 gap-2 md:gap-4">
+          {/* Search + Sort Controls */}
+          <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-3 md:p-4 mb-6 flex flex-col md:flex-row justify-between gap-3">
             <Input
               type="text"
               placeholder="Search stores..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="flex-1 text-sm"
+              className="flex-1 text-sm md:text-base bg-slate-50 border-slate-200 focus:border-indigo-500 focus:ring-indigo-500"
             />
+
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full md:w-[180px] text-sm">
+              <SelectTrigger className="w-full md:w-[180px] text-sm bg-slate-50 border-slate-200 focus:border-indigo-500 focus:ring-indigo-500">
                 <SelectValue placeholder="Sort by" />
               </SelectTrigger>
               <SelectContent>
@@ -107,8 +117,8 @@ function StoresPage() {
             </Select>
           </div>
 
-          {/* Store Cards */}
-          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2 md:gap-6">
+          {/* Store Cards Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6">
             {stores.map((store) => (
               <StoreCard key={store.id} store={store} />
             ))}

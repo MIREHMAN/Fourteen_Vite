@@ -1,19 +1,11 @@
-"use client";
-
-import React, { useState } from "react";
+import  { useState } from "react";
 import { Button } from "@/components/ui/button";
 
-interface AddProps {
-  onAddToCart: (quantity: number) => void;
-  onBuyNow: (quantity: number) => void;
-  stockNumber: number;
-}
-
-const Add: React.FC<AddProps> = ({ onAddToCart, onBuyNow, stockNumber }) => {
+const Add = ({ onAddToCart, onBuyNow, stockNumber }) => {
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleQuantity = (type: "dec" | "inc") => {
+  const handleQuantity = (type) => {
     if (type === "dec" && quantity > 1) {
       setQuantity(quantity - 1);
     }

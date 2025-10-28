@@ -1,4 +1,4 @@
-import React from "react";
+
 
 export function SpecialOfferCard({ title, discount, image }) {
   return (

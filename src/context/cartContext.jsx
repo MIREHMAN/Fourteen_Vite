@@ -1,21 +1,22 @@
 import { createContext, useState, useEffect } from "react";
 
-export const CartContext = createContext(undefined);
+export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
+  // Load cart from localStorage on mount
   useEffect(() => {
     const savedCart = localStorage.getItem("cart");
-    if (savedCart) {
-      setCart(JSON.parse(savedCart));
-    }
+    if (savedCart) setCart(JSON.parse(savedCart));
   }, []);
 
+  // Persist cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
+  // Add item to cart or increase quantity if it already exists
   const addToCart = (newItem) => {
     setCart((prevCart) => {
       const existingItem = prevCart.find((item) => item.id === newItem.id);
@@ -31,10 +32,12 @@ export const CartProvider = ({ children }) => {
     });
   };
 
+  // Remove item from cart
   const removeFromCart = (id) => {
     setCart((prevCart) => prevCart.filter((item) => item.id !== id));
   };
 
+  // Update item quantity
   const updateQuantity = (id, quantity) => {
     setCart((prevCart) =>
       prevCart
@@ -45,13 +48,12 @@ export const CartProvider = ({ children }) => {
     );
   };
 
-  const clearCart = () => {
-    setCart([]);
-  };
+  // Clear entire cart
+  const clearCart = () => setCart([]);
 
+  // Buy Now - replaces cart with only the selected item
   const buyNow = (item) => {
-    clearCart();
-    addToCart(item);
+    setCart([{ ...item, quantity: 1 }]);
   };
 
   return (
