@@ -1,70 +1,38 @@
-import { useState, useEffect } from "react";
+import { useAsync } from "@/hooks/useAsync";
+import { productsService } from "@/services/productsService";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import ProductCard from "@/components/ProductCard";
 
-// Define a structure for the product
 const FeaturedProducts = () => {
-  // Dummy data for products
-  const dummyProducts = [
-    {
-      id: 1,
-      name: "Product 1",
-      price: 1000,
-      discount_price: 800,
-      discount_percentage: 20,
-      average_rating: 4.5,
-    },
-    {
-      id: 2,
-      name: "Product 2",
-      price: 1500,
-      discount_price: 1200,
-      discount_percentage: 15,
-      average_rating: 4.0,
-    },
-    {
-      id: 3,
-      name: "Product 3",
-      price: 2000,
-      discount_price: 1800,
-      discount_percentage: 10,
-      average_rating: 4.8,
-    },
-    {
-      id: 4,
-      name: "Product 4",
-      price: 2500,
-      discount_price: 2200,
-      discount_percentage: 12,
-      average_rating: 4.2,
-    },
-  ];
+  const { loading, value: response, error } = useAsync(
+    () => productsService.getAllProducts(),
+    []
+  );
 
-  const [products, setProducts] = useState(dummyProducts);
-  const [loading, setLoading] = useState(false); // Set to false since we're using dummy data
-  const [error, setError] = useState(null);
+  const products = response?.results ?? [];
 
-  useEffect(() => {
-    // Simulate a delay to mimic data fetching
-    const fetchProducts = () => {
-      setLoading(true);
-      setTimeout(() => {
-        setProducts(dummyProducts);
-        setLoading(false);
-      }, 1000); // 1-second delay
-    };
+  // Skeleton for loading
+  const ProductSkeleton = () => (
+    <div className="animate-pulse bg-gray-200 rounded-xl h-64 w-full"></div>
+  );
 
-    fetchProducts();
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (error) {
-    return <div>Error: {error}</div>;
-  }
+  // Error skeleton
+  const ProductError = () => (
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-8">
+      {Array.from({ length: 8 }).map((_, index) => (
+        <div
+          key={index}
+          className="bg-red-50 border border-red-200 rounded-xl h-64 flex flex-col justify-center items-center text-red-500"
+        >
+          <p className="mb-2">Failed to load</p>
+          <Button variant="outline" size="sm" onClick={() => window.location.reload()}>
+            Retry
+          </Button>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -74,11 +42,24 @@ const FeaturedProducts = () => {
           View All <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-8">
-        {products.map((product) => (
-          <ProductCard key={product.id} {...product} />
-        ))}
-      </div>
+
+      {loading && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-8">
+          {Array.from({ length: 8 }).map((_, index) => (
+            <ProductSkeleton key={index} />
+          ))}
+        </div>
+      )}
+
+      {error && <ProductError />}
+
+      {!loading && !error && (
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 md:gap-8">
+          {products.slice(0, 8).map((product) => (
+            <ProductCard key={product.id} {...product} />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

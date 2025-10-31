@@ -1,21 +1,27 @@
 import { useEffect } from "react";
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useCart } from "@/context/useCart";
 
 export default function OrderConfirmationPage() {
   const location = useLocation();
-  // You can pass order data via state from CheckoutPage
+  const navigate = useNavigate();
   const { formData, paymentMethod, cart } = location.state || {};
+  const { clearCart } = useCart();
 
   const totalAmount = cart?.reduce((sum, item) => sum + item.price * item.quantity, 0) || 0;
 
   useEffect(() => {
     if (!cart || cart.length === 0) {
-      // If someone opens this page directly, redirect back to shop
-      window.location.href = "/";
+      // Redirect if no order data
+      navigate("/");
+      return;
     }
-  }, [cart]);
+
+    // Clear cart after successful order
+    clearCart();
+  }, [cart, clearCart, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-white to-slate-100 py-12 px-4">
